@@ -64,8 +64,8 @@ export default function Contact() {
           <InfoRow
             icon={MailIcon}
             label="Email"
-            value="charos@dandctranslations.com"
-            href="mailto:charos@dandctranslations.com"
+            value="bigchungus@ligma.com"
+            href="mailto:bigchungus@ligma.com"
           />
           <InfoRow
             icon={PhoneIcon}
