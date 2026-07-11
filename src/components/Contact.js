@@ -1,4 +1,8 @@
 import { Eyebrow, LinkButton } from './ui';
+import { useLang } from '../i18n';
+import { content } from '../content';
+
+const EMAIL = 'dandctranslations@gmail.com';
 
 function InfoRow({ icon, label, value, href }) {
   return (
@@ -41,21 +45,23 @@ const PinIcon = (
 );
 
 export default function Contact() {
+  const { lang } = useLang();
+  const t = content[lang].contact;
+
   return (
     <section id="contact" className="bg-brand-dark py-20 lg:py-24">
       <div className="mx-auto grid max-w-container items-center gap-12 px-5 sm:px-8 lg:grid-cols-2">
         <div>
-          <Eyebrow>Contact Us</Eyebrow>
+          <Eyebrow>{t.eyebrow}</Eyebrow>
           <h2 className="mt-4 font-heading text-4xl font-extrabold text-white sm:text-5xl">
-            Get a Free Quote
+            {t.heading}
           </h2>
           <p className="mt-6 max-w-md text-lg leading-relaxed text-gray-300">
-            Reach out with your documents or questions and I&apos;ll get back to
-            you with a free, no-obligation quote.
+            {t.body}
           </p>
           <div className="mt-8">
             <LinkButton to="/quote" variant="primary">
-              Upload &amp; Get a Quote
+              {t.cta}
             </LinkButton>
           </div>
         </div>
@@ -63,27 +69,23 @@ export default function Contact() {
         <div className="space-y-7 rounded-xl bg-white p-8 shadow-2xl">
           <InfoRow
             icon={MailIcon}
-            label="Email"
-            value="bigchungus@ligma.com"
-            href="mailto:bigchungus@ligma.com"
+            label={t.emailLabel}
+            value={EMAIL}
+            href={`mailto:${EMAIL}`}
           />
           <InfoRow
             icon={PhoneIcon}
-            label="Australian Phone"
+            label={t.auPhoneLabel}
             value="+61 494 003 881"
             href="tel:+61494003881"
           />
           <InfoRow
             icon={PhoneIcon}
-            label="Uzbek Phone"
+            label={t.uzPhoneLabel}
             value="+998 50 576 79 06"
             href="tel:+998505767906"
           />
-          <InfoRow
-            icon={PinIcon}
-            label="Based In"
-            value="Brisbane, Australia & Tashkent, Uzbekistan"
-          />
+          <InfoRow icon={PinIcon} label={t.basedLabel} value={t.based} />
         </div>
       </div>
     </section>

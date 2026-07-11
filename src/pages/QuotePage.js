@@ -2,15 +2,9 @@ import { useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
-import { BoltIcon } from '../components/ui';
-
-const LANGUAGES = ['Uzbek', 'English', 'Russian'];
-const SERVICE_TYPES = [
-  'Certified translation',
-  'Regular translation',
-  'Interpreting',
-  'Editing & proofreading',
-];
+import { BoltIcon, Field, inputClasses } from '../components/ui';
+import { useLang } from '../i18n';
+import { content } from '../content';
 
 function formatSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
@@ -18,21 +12,9 @@ function formatSize(bytes) {
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
 
-function Field({ label, children, htmlFor }) {
-  return (
-    <label htmlFor={htmlFor} className="block">
-      <span className="mb-1.5 block font-heading text-sm font-bold uppercase tracking-wide text-gray-600">
-        {label}
-      </span>
-      {children}
-    </label>
-  );
-}
-
-const inputClasses =
-  'w-full rounded-md border border-gray-300 bg-white px-4 py-2.5 text-gray-900 outline-none transition-colors focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20';
-
 export default function QuotePage() {
+  const { lang } = useLang();
+  const t = content[lang].quote;
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -74,15 +56,12 @@ export default function QuotePage() {
       <section className="bg-brand-dark py-14 text-center">
         <div className="mx-auto max-w-2xl px-5 sm:px-8">
           <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-orange">
-            Free, No-Obligation Quote
+            {t.eyebrow}
           </p>
           <h1 className="mt-3 font-heading text-4xl font-extrabold text-white sm:text-5xl">
-            Get Your Free Quote
+            {t.heading}
           </h1>
-          <p className="mt-4 text-lg text-gray-300">
-            Upload your document(s) and tell us what you need. We&apos;ll review
-            them and email you a quote.
-          </p>
+          <p className="mt-4 text-lg text-gray-300">{t.intro}</p>
         </div>
       </section>
 
@@ -96,19 +75,20 @@ export default function QuotePage() {
                 </svg>
               </span>
               <h2 className="mt-6 font-heading text-3xl font-extrabold text-brand-dark">
-                Thanks! Your request has been received
+                {t.successHeading}
               </h2>
               <p className="mx-auto mt-3 max-w-md text-gray-600">
-                We&apos;ll review your {files.length > 0 ? `${files.length} ` : ''}
-                document{files.length === 1 ? '' : 's'} and email a quote
-                shortly.
+                {t.successBodyA}
+                {files.length > 0 ? `${files.length} ` : ''}
+                {files.length === 1 ? t.successBodyDocOne : t.successBodyDocMany}
+                {t.successBodyB}
               </p>
               <div className="mt-8 flex flex-wrap justify-center gap-4">
                 <Link
                   to="/"
                   className="inline-flex items-center rounded-sm bg-brand-dark px-7 py-3 font-heading text-sm font-bold uppercase tracking-wide text-white hover:bg-black"
                 >
-                  Back to Home
+                  {t.backToHome}
                 </Link>
                 <button
                   type="button"
@@ -118,7 +98,7 @@ export default function QuotePage() {
                   }}
                   className="inline-flex items-center rounded-sm border border-gray-300 px-7 py-3 font-heading text-sm font-bold uppercase tracking-wide text-brand-dark hover:bg-gray-50"
                 >
-                  Submit Another
+                  {t.submitAnother}
                 </button>
               </div>
             </div>
@@ -130,7 +110,7 @@ export default function QuotePage() {
               {/* Upload column */}
               <div className="lg:col-span-2">
                 <h2 className="font-heading text-xl font-bold text-brand-dark">
-                  Your documents
+                  {t.documents}
                 </h2>
                 <div
                   onDragOver={(e) => {
@@ -152,12 +132,10 @@ export default function QuotePage() {
                     </svg>
                   </span>
                   <p className="mt-4 font-semibold text-brand-dark">
-                    Drag &amp; drop files here, or{' '}
-                    <span className="text-brand-orange underline">browse</span>
+                    {t.dropLead}
+                    <span className="text-brand-orange underline">{t.browse}</span>
                   </p>
-                  <p className="mt-1 text-sm text-gray-500">
-                    PDF, Word, or image files — you can add several
-                  </p>
+                  <p className="mt-1 text-sm text-gray-500">{t.dropHint}</p>
                   <input
                     ref={inputRef}
                     type="file"
@@ -190,7 +168,7 @@ export default function QuotePage() {
                         <button
                           type="button"
                           onClick={() => removeFile(i)}
-                          aria-label={`Remove ${f.name}`}
+                          aria-label={`${t.removeFile} ${f.name}`}
                           className="ml-3 shrink-0 text-gray-400 hover:text-brand-orange"
                         >
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
@@ -204,45 +182,45 @@ export default function QuotePage() {
               </div>
 
               {/* Details column */}
-              <Field label="Full name" htmlFor="name">
-                <input id="name" name="name" type="text" required placeholder="Jane Doe" className={inputClasses} />
+              <Field label={t.name} htmlFor="name">
+                <input id="name" name="name" type="text" required placeholder={t.namePlaceholder} className={inputClasses} />
               </Field>
-              <Field label="Email" htmlFor="email">
-                <input id="email" name="email" type="email" required placeholder="you@example.com" className={inputClasses} />
+              <Field label={t.email} htmlFor="email">
+                <input id="email" name="email" type="email" required placeholder={t.emailPlaceholder} className={inputClasses} />
               </Field>
-              <Field label="Phone" htmlFor="phone">
-                <input id="phone" name="phone" type="tel" placeholder="+61 400 000 000" className={inputClasses} />
+              <Field label={t.phone} htmlFor="phone">
+                <input id="phone" name="phone" type="tel" placeholder={t.phonePlaceholder} className={inputClasses} />
               </Field>
-              <Field label="Service type" htmlFor="service">
+              <Field label={t.serviceType} htmlFor="service">
                 <select id="service" name="service" className={inputClasses} defaultValue="">
                   <option value="" disabled>
-                    Select a service
+                    {t.selectService}
                   </option>
-                  {SERVICE_TYPES.map((s) => (
+                  {t.serviceTypes.map((s) => (
                     <option key={s} value={s}>
                       {s}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="Translate from" htmlFor="from">
+              <Field label={t.from} htmlFor="from">
                 <select id="from" name="from" className={inputClasses} defaultValue="">
                   <option value="" disabled>
-                    Source language
+                    {t.sourceLang}
                   </option>
-                  {LANGUAGES.map((l) => (
+                  {t.languages.map((l) => (
                     <option key={l} value={l}>
                       {l}
                     </option>
                   ))}
                 </select>
               </Field>
-              <Field label="Translate to" htmlFor="to">
+              <Field label={t.to} htmlFor="to">
                 <select id="to" name="to" className={inputClasses} defaultValue="">
                   <option value="" disabled>
-                    Target language
+                    {t.targetLang}
                   </option>
-                  {LANGUAGES.map((l) => (
+                  {t.languages.map((l) => (
                     <option key={l} value={l}>
                       {l}
                     </option>
@@ -250,12 +228,12 @@ export default function QuotePage() {
                 </select>
               </Field>
               <div className="lg:col-span-2">
-                <Field label="Additional notes" htmlFor="notes">
+                <Field label={t.notes} htmlFor="notes">
                   <textarea
                     id="notes"
                     name="notes"
                     rows={4}
-                    placeholder="Tell us about deadlines, certification requirements, or anything else."
+                    placeholder={t.notesPlaceholder}
                     className={inputClasses}
                   />
                 </Field>
@@ -266,13 +244,13 @@ export default function QuotePage() {
                   type="submit"
                   className="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-orange px-9 py-4 font-heading text-base font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand-orangeDark"
                 >
-                  <BoltIcon className="h-5 w-5" /> Get a Quote
+                  <BoltIcon className="h-5 w-5" /> {t.submit}
                 </button>
                 <Link
                   to="/"
                   className="font-heading text-sm font-bold uppercase tracking-wide text-gray-500 hover:text-brand-orange"
                 >
-                  &larr; Back to home
+                  {t.backHome}
                 </Link>
               </div>
             </form>

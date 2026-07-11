@@ -40,6 +40,22 @@ export function AnchorButton({ href, variant = 'outline', className = '', childr
   );
 }
 
+// Shared input styling for text inputs, selects, and textareas across forms.
+export const inputClasses =
+  'w-full rounded-md border border-gray-300 bg-white px-4 py-2.5 text-gray-900 outline-none transition-colors focus:border-brand-orange focus:ring-2 focus:ring-brand-orange/20';
+
+// Labelled form field wrapper used by the quote and payment-builder forms.
+export function Field({ label, children, htmlFor }) {
+  return (
+    <label htmlFor={htmlFor} className="block">
+      <span className="mb-1.5 block font-heading text-sm font-bold uppercase tracking-wide text-gray-600">
+        {label}
+      </span>
+      {children}
+    </label>
+  );
+}
+
 // A simple lightning/quote glyph used in card icons and buttons.
 export function BoltIcon({ className = 'h-4 w-4' }) {
   return (

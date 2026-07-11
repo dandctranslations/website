@@ -1,12 +1,6 @@
 import { Eyebrow } from './ui';
-
-const points = [
-  'NAATI Certified in Uzbek and English translations',
-  'Accurate and culturally sensitive translations',
-  'Fast turnaround times',
-  'Confidential handling of all documents',
-  'Personal service from an experienced language professional',
-];
+import { useLang } from '../i18n';
+import { content } from '../content';
 
 function CheckIcon() {
   return (
@@ -19,24 +13,20 @@ function CheckIcon() {
 }
 
 export default function WhyUs() {
+  const { lang } = useLang();
+  const t = content[lang].whyUs;
+
   return (
     <section id="why-us" className="bg-white py-20 lg:py-24">
       <div className="mx-auto grid max-w-container items-center gap-12 px-5 sm:px-8 lg:grid-cols-2">
         <div>
-          <Eyebrow>Why Choose Us</Eyebrow>
+          <Eyebrow>{t.eyebrow}</Eyebrow>
           <h2 className="mt-4 font-heading text-4xl font-extrabold leading-tight text-brand-dark sm:text-5xl">
-            Language expertise backed by professional experience
+            {t.heading}
           </h2>
-          <p className="mt-6 text-lg leading-relaxed text-gray-600">
-            We specialise in Uzbek, English, and Russian, allowing us to deliver
-            translations that are not only linguistically accurate but also
-            culturally appropriate. Whether you need a certified document
-            translated, an interpreter for an important meeting, or assistance
-            with academic and business communication, we provide reliable,
-            confidential, and personalised service.
-          </p>
+          <p className="mt-6 text-lg leading-relaxed text-gray-600">{t.body}</p>
           <ul className="mt-8 space-y-3">
-            {points.map((p) => (
+            {t.points.map((p) => (
               <li key={p} className="flex items-start gap-3 text-gray-800">
                 <CheckIcon />
                 <span className="leading-snug">{p}</span>
@@ -45,25 +35,32 @@ export default function WhyUs() {
           </ul>
         </div>
 
-        {/* Image collage with stat badge overlay */}
+        {/* Image collage with NAATI certification badge overlay */}
         <div className="relative">
           <div className="grid grid-cols-2 gap-4">
             <img
-              src="https://picsum.photos/seed/dandc-why1/500/640"
-              alt="Translator reviewing documents"
+              src="/images/whyus-1.png"
+              alt={t.img1Alt}
               className="h-full w-full rounded-lg object-cover"
             />
             <img
-              src="https://picsum.photos/seed/dandc-why2/500/640"
-              alt="Interpreting session"
+              src="/images/hero.jpg"
+              alt={t.img2Alt}
               className="mt-8 h-full w-full rounded-lg object-cover"
             />
           </div>
-          <div className="absolute bottom-4 left-4 rounded-lg bg-brand-dark p-5 text-white shadow-xl sm:left-1/2 sm:-translate-x-1/2">
-            <p className="font-heading text-3xl font-extrabold text-brand-orange">
-              NAATI
-            </p>
-            <p className="text-sm text-gray-300">Certified professional</p>
+          <div className="absolute bottom-4 left-4 flex items-center gap-4 rounded-lg bg-brand-dark p-4 text-white shadow-xl sm:left-1/2 sm:-translate-x-1/2">
+            <img
+              src="/images/naati-badge.png"
+              alt="NAATI certified translator badge"
+              className="h-12 w-auto rounded bg-white p-1"
+            />
+            <div>
+              <p className="font-heading text-2xl font-extrabold leading-none text-brand-orange">
+                {t.badge}
+              </p>
+              <p className="text-sm text-gray-300">{t.badgeSub}</p>
+            </div>
           </div>
         </div>
       </div>

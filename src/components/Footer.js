@@ -1,7 +1,12 @@
 import { Link } from 'react-router-dom';
 import { BoltIcon } from './ui';
+import { useLang } from '../i18n';
+import { content } from '../content';
 
 export default function Footer() {
+  const { lang } = useLang();
+  const t = content[lang].footer;
+
   return (
     <footer className="border-t border-white/10 bg-brand-darker py-8">
       <div className="mx-auto flex max-w-container flex-col items-center justify-between gap-4 px-5 sm:flex-row sm:px-8">
@@ -14,8 +19,7 @@ export default function Footer() {
           </span>
         </Link>
         <p className="text-sm text-gray-400">
-          &copy; {new Date().getFullYear()} D&amp;C Translations. All rights
-          reserved.
+          &copy; {new Date().getFullYear()} D&amp;C Translations. {t.rights}
         </p>
       </div>
     </footer>
