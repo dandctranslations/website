@@ -7,7 +7,7 @@ const EMAIL = 'dandctranslations@gmail.com';
 function InfoRow({ icon, label, value, href }) {
   return (
     <div className="flex items-start gap-4">
-      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-brand-orange/10 text-brand-orange">
+      <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-md bg-brand-blue/10 text-brand-blue">
         {icon}
       </span>
       <div>
@@ -15,7 +15,7 @@ function InfoRow({ icon, label, value, href }) {
           {label}
         </p>
         {href ? (
-          <a href={href} className="text-lg font-semibold text-brand-dark hover:text-brand-orange">
+          <a href={href} className="text-lg font-semibold text-brand-dark hover:text-brand-blue">
             {value}
           </a>
         ) : (

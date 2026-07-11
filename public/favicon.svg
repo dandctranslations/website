@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
+  <!-- Transparent background; front bubble is white so it stays visible on dark tab bars -->
+  <!-- Back bubble (blue) -->
+  <g fill="#3B5CE6">
+    <rect x="8" y="10" width="22" height="17" rx="5.5"/>
+    <path d="M12 22 H20 L9 31 Z"/>
+  </g>
+  <!-- Front bubble (white) -->
+  <g fill="#FFFFFF">
+    <rect x="22" y="18" width="20" height="17" rx="5.5"/>
+    <path d="M30 30 H37 L40 39 Z"/>
+  </g>
+</svg>

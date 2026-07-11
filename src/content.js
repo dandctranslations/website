@@ -23,6 +23,7 @@ export const content = {
       body: 'Whether you need a birth certificate translated for a visa application, an interpreter for an appointment, or help communicating across languages, I provide clear, reliable support from start to finish.',
       cta: 'Request a Quote',
       phone: '+61 494 003 881',
+      phoneHref: 'tel:+61494003881',
       imgAlt: 'Certified Uzbek–English translator at work',
     },
     about: {
@@ -192,7 +193,8 @@ export const content = {
       titleTail: 'Tarjima va og‘zaki tarjima xizmatlari',
       body: 'Viza uchun tug‘ilganlik haqidagi guvohnomangizni tarjima qildirmoqchimisiz, muhim uchrashuv uchun tarjimon kerakmi yoki ikki til o‘rtasidagi muloqotda yordam izlayapsizmi? Men sizga boshidan oxirigacha aniq, ishonchli va professional til xizmatlarini taqdim etaman.',
       cta: 'Bepul narx so‘rang',
-      phone: '+61 494 003 881',
+      phone: '+998 50 576 79 06',
+      phoneHref: 'tel:+998505767906',
       imgAlt: 'NAATI sertifikatiga ega o‘zbek–ingliz tarjimoni ish jarayonida',
     },
     about: {

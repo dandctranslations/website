@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" width="360" height="96" font-family="'Barlow Semi Condensed', 'Arial Narrow', sans-serif">
+  <!-- Logo mark: two overlapping speech bubbles -->
+  <g transform="translate(4 24)">
+    <g fill="#3B5CE6">
+      <rect x="0" y="0" width="30" height="23" rx="7.5"/>
+      <path d="M5.5 16.5 H16.5 L1 29 Z"/>
+    </g>
+    <g fill="#0F1729">
+      <rect x="19" y="11" width="27" height="23" rx="7.5"/>
+      <path d="M30.5 27 H40 L44 39 Z"/>
+    </g>
+  </g>
+  <!-- Wordmark -->
+  <text x="74" y="46" font-size="34" font-weight="800" fill="#0F1729" letter-spacing="-0.5">D&amp;C Translations</text>
+  <text x="76" y="70" font-size="15" font-weight="600" fill="#6B7A99" letter-spacing="4">TRANSLATION &amp; INTERPRETING</text>
+</svg>

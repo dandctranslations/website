@@ -14,7 +14,7 @@ function ServiceCard({ service, cta }) {
         />
       </div>
       <div className="flex flex-1 flex-col p-6">
-        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-brand-orange/10 text-brand-orange">
+        <span className="mb-3 flex h-10 w-10 items-center justify-center rounded-md bg-brand-blue/10 text-brand-blue">
           <BoltIcon className="h-5 w-5" />
         </span>
         <h3 className="font-heading text-xl font-bold text-brand-dark">
@@ -24,14 +24,14 @@ function ServiceCard({ service, cta }) {
         <ul className="mt-4 space-y-1.5">
           {service.bullets.map((b) => (
             <li key={b} className="flex items-start gap-2 text-sm text-gray-700">
-              <BoltIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-orange" />
+              <BoltIcon className="mt-0.5 h-3.5 w-3.5 shrink-0 text-brand-blue" />
               {b}
             </li>
           ))}
         </ul>
         <Link
           to="/quote"
-          className="mt-6 inline-flex items-center gap-1 font-heading text-sm font-bold uppercase tracking-wide text-brand-orange transition-colors hover:text-brand-orangeDark"
+          className="mt-6 inline-flex items-center gap-1 font-heading text-sm font-bold uppercase tracking-wide text-brand-blue transition-colors hover:text-brand-blueDark"
         >
           {cta} &rarr;
         </Link>
@@ -45,7 +45,7 @@ export default function Services() {
   const t = content[lang].services;
 
   return (
-    <section id="services" className="bg-brand-cream py-20 lg:py-24">
+    <section id="services" className="bg-brand-tint py-20 lg:py-24">
       <div className="mx-auto max-w-container px-5 sm:px-8">
         <div className="mx-auto max-w-2xl text-center">
           <Eyebrow>{t.eyebrow}</Eyebrow>

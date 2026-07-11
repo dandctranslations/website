@@ -61,7 +61,7 @@ export default function NewPaymentLinkPage() {
 
       <section className="bg-brand-dark py-14 text-center">
         <div className="mx-auto max-w-2xl px-5 sm:px-8">
-          <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-orange">
+          <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-blue">
             Internal Tool
           </p>
           <h1 className="mt-3 font-heading text-4xl font-extrabold text-white sm:text-5xl">
@@ -73,7 +73,7 @@ export default function NewPaymentLinkPage() {
         </div>
       </section>
 
-      <main className="flex-1 bg-brand-cream py-14">
+      <main className="flex-1 bg-brand-tint py-14">
         <div className="mx-auto max-w-2xl px-5 sm:px-8">
           <div className="grid gap-6 rounded-xl bg-white p-6 shadow-lg sm:p-9">
             <Field label="Client name" htmlFor="client">
@@ -157,7 +157,7 @@ export default function NewPaymentLinkPage() {
                   <button
                     type="button"
                     onClick={copy}
-                    className="mt-4 inline-flex items-center gap-2 rounded-sm bg-brand-orange px-7 py-3 font-heading text-sm font-bold uppercase tracking-wide text-white hover:bg-brand-orangeDark"
+                    className="mt-4 inline-flex items-center gap-2 rounded-sm bg-brand-blue px-7 py-3 font-heading text-sm font-bold uppercase tracking-wide text-white hover:bg-brand-blueDark"
                   >
                     <BoltIcon className="h-4 w-4" />
                     {copied ? 'Copied!' : 'Copy link'}

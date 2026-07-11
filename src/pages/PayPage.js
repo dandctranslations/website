@@ -38,7 +38,7 @@ function CopyButton({ value }) {
     <button
       type="button"
       onClick={copy}
-      className="ml-3 shrink-0 rounded-sm border border-gray-300 px-3 py-1 font-heading text-xs font-bold uppercase tracking-wide text-brand-dark hover:border-brand-orange hover:text-brand-orange"
+      className="ml-3 shrink-0 rounded-sm border border-gray-300 px-3 py-1 font-heading text-xs font-bold uppercase tracking-wide text-brand-dark hover:border-brand-blue hover:text-brand-blue"
     >
       {copied ? 'Copied' : 'Copy'}
     </button>
@@ -97,7 +97,7 @@ export default function PayPage() {
 
       <section className="bg-brand-dark py-14 text-center">
         <div className="mx-auto max-w-2xl px-5 sm:px-8">
-          <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-orange">
+          <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-blue">
             {t.eyebrow}
           </p>
           <h1 className="mt-3 font-heading text-4xl font-extrabold text-white sm:text-5xl">
@@ -112,7 +112,7 @@ export default function PayPage() {
         </div>
       </section>
 
-      <main className="flex-1 bg-brand-cream py-14">
+      <main className="flex-1 bg-brand-tint py-14">
         <div className="mx-auto max-w-2xl px-5 sm:px-8">
           {!account || !amount ? (
             <Invalid t={t} />
@@ -140,8 +140,8 @@ export default function PayPage() {
                 )}
               </div>
 
-              <div className="mt-8 flex items-start gap-3 rounded-lg bg-brand-orange/5 p-4">
-                <BoltIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-orange" />
+              <div className="mt-8 flex items-start gap-3 rounded-lg bg-brand-blue/5 p-4">
+                <BoltIcon className="mt-0.5 h-5 w-5 shrink-0 text-brand-blue" />
                 <p className="text-sm text-gray-700">{t.note}</p>
               </div>
             </div>

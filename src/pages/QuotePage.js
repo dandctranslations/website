@@ -55,7 +55,7 @@ export default function QuotePage() {
       {/* Header band */}
       <section className="bg-brand-dark py-14 text-center">
         <div className="mx-auto max-w-2xl px-5 sm:px-8">
-          <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-orange">
+          <p className="font-heading text-sm font-bold uppercase tracking-[0.2em] text-brand-blue">
             {t.eyebrow}
           </p>
           <h1 className="mt-3 font-heading text-4xl font-extrabold text-white sm:text-5xl">
@@ -65,11 +65,11 @@ export default function QuotePage() {
         </div>
       </section>
 
-      <main className="flex-1 bg-brand-cream py-14">
+      <main className="flex-1 bg-brand-tint py-14">
         <div className="mx-auto max-w-4xl px-5 sm:px-8">
           {submitted ? (
             <div className="rounded-xl bg-white p-10 text-center shadow-lg">
-              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange">
+              <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-8 w-8">
                   <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                 </svg>
@@ -122,18 +122,18 @@ export default function QuotePage() {
                   onClick={() => inputRef.current?.click()}
                   className={`mt-3 flex cursor-pointer flex-col items-center justify-center rounded-lg border-2 border-dashed px-6 py-10 text-center transition-colors ${
                     dragging
-                      ? 'border-brand-orange bg-brand-orange/5'
-                      : 'border-gray-300 hover:border-brand-orange hover:bg-brand-cream/50'
+                      ? 'border-brand-blue bg-brand-blue/5'
+                      : 'border-gray-300 hover:border-brand-blue hover:bg-brand-tint/50'
                   }`}
                 >
-                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-orange/10 text-brand-orange">
+                  <span className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-6 w-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M12 16V4m0 0L8 8m4-4 4 4M4 17v1a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-1" />
                     </svg>
                   </span>
                   <p className="mt-4 font-semibold text-brand-dark">
                     {t.dropLead}
-                    <span className="text-brand-orange underline">{t.browse}</span>
+                    <span className="text-brand-blue underline">{t.browse}</span>
                   </p>
                   <p className="mt-1 text-sm text-gray-500">{t.dropHint}</p>
                   <input
@@ -157,7 +157,7 @@ export default function QuotePage() {
                         className="flex items-center justify-between rounded-md border border-gray-200 bg-gray-50 px-4 py-2.5"
                       >
                         <span className="flex min-w-0 items-center gap-3">
-                          <BoltIcon className="h-4 w-4 shrink-0 text-brand-orange" />
+                          <BoltIcon className="h-4 w-4 shrink-0 text-brand-blue" />
                           <span className="truncate text-sm font-medium text-brand-dark">
                             {f.name}
                           </span>
@@ -169,7 +169,7 @@ export default function QuotePage() {
                           type="button"
                           onClick={() => removeFile(i)}
                           aria-label={`${t.removeFile} ${f.name}`}
-                          className="ml-3 shrink-0 text-gray-400 hover:text-brand-orange"
+                          className="ml-3 shrink-0 text-gray-400 hover:text-brand-blue"
                         >
                           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-5 w-5">
                             <path strokeLinecap="round" d="M6 6l12 12M18 6L6 18" />
@@ -242,13 +242,13 @@ export default function QuotePage() {
               <div className="flex flex-wrap items-center gap-4 lg:col-span-2">
                 <button
                   type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-orange px-9 py-4 font-heading text-base font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand-orangeDark"
+                  className="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-blue px-9 py-4 font-heading text-base font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand-blueDark"
                 >
                   <BoltIcon className="h-5 w-5" /> {t.submit}
                 </button>
                 <Link
                   to="/"
-                  className="font-heading text-sm font-bold uppercase tracking-wide text-gray-500 hover:text-brand-orange"
+                  className="font-heading text-sm font-bold uppercase tracking-wide text-gray-500 hover:text-brand-blue"
                 >
                   {t.backHome}
                 </Link>

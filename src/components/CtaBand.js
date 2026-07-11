@@ -7,7 +7,7 @@ export default function CtaBand() {
   const t = content[lang].cta;
 
   return (
-    <section className="bg-brand-cream py-20 lg:py-24">
+    <section className="bg-brand-tint py-20 lg:py-24">
       <div className="mx-auto max-w-3xl px-5 text-center sm:px-8">
         <Eyebrow>{t.eyebrow}</Eyebrow>
         <h2 className="mt-4 font-heading text-4xl font-extrabold leading-tight text-brand-dark sm:text-5xl">

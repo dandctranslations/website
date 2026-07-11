@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { BoltIcon } from './ui';
+import { LogoMark } from './Logo';
 import { useLang } from '../i18n';
 import { content } from '../content';
 
@@ -25,7 +25,7 @@ function LangToggle({ className = '' }) {
           aria-pressed={lang === o.code}
           className={`px-2.5 py-1 font-heading text-xs font-bold tracking-wide transition-colors ${
             lang === o.code
-              ? 'bg-brand-orange text-white'
+              ? 'bg-brand-blue text-white'
               : 'text-gray-200 hover:text-white'
           }`}
         >
@@ -56,9 +56,7 @@ export default function Navbar({ variant = 'landing' }) {
     <header className="sticky top-0 z-50 bg-brand-dark/95 backdrop-blur supports-[backdrop-filter]:bg-brand-dark/80">
       <div className="mx-auto flex h-20 max-w-container items-center justify-between px-5 sm:px-8">
         <Link to="/" className="flex items-center gap-2.5 text-white">
-          <span className="flex h-9 w-9 items-center justify-center rounded-md bg-brand-orange">
-            <BoltIcon className="h-5 w-5 text-white" />
-          </span>
+          <LogoMark className="h-9 w-9" onDark />
           <span className="font-heading text-xl font-extrabold tracking-tight">
             D&amp;C Translations
           </span>
@@ -71,7 +69,7 @@ export default function Navbar({ variant = 'landing' }) {
               key={l.href}
               href={l.href}
               onClick={(e) => handleAnchor(e, l.href)}
-              className="font-heading text-[15px] font-semibold text-gray-200 transition-colors hover:text-brand-orange"
+              className="font-heading text-[15px] font-semibold text-gray-200 transition-colors hover:text-brand-blue"
             >
               {l.label}
             </a>
@@ -82,7 +80,7 @@ export default function Navbar({ variant = 'landing' }) {
           <LangToggle />
           <Link
             to="/quote"
-            className="inline-flex items-center rounded-sm bg-white px-6 py-3 font-heading text-sm font-bold uppercase tracking-wide text-brand-dark transition-colors hover:bg-brand-cream"
+            className="inline-flex items-center rounded-sm bg-white px-6 py-3 font-heading text-sm font-bold uppercase tracking-wide text-brand-dark transition-colors hover:bg-brand-tint"
           >
             {t.quote}
           </Link>
@@ -118,7 +116,7 @@ export default function Navbar({ variant = 'landing' }) {
                 key={l.href}
                 href={l.href}
                 onClick={(e) => handleAnchor(e, l.href)}
-                className="border-b border-white/5 py-3 font-heading font-semibold text-gray-200 hover:text-brand-orange"
+                className="border-b border-white/5 py-3 font-heading font-semibold text-gray-200 hover:text-brand-blue"
               >
                 {l.label}
               </a>
@@ -126,7 +124,7 @@ export default function Navbar({ variant = 'landing' }) {
             <Link
               to="/quote"
               onClick={() => setOpen(false)}
-              className="mt-4 inline-flex items-center justify-center rounded-sm bg-brand-orange px-6 py-3 font-heading text-sm font-bold uppercase tracking-wide text-white"
+              className="mt-4 inline-flex items-center justify-center rounded-sm bg-brand-blue px-6 py-3 font-heading text-sm font-bold uppercase tracking-wide text-white"
             >
               {t.quote}
             </Link>

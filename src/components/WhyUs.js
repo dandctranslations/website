@@ -4,7 +4,7 @@ import { content } from '../content';
 
 function CheckIcon() {
   return (
-    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-orange text-white">
+    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-brand-blue text-white">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="h-3 w-3">
         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
       </svg>
@@ -56,7 +56,7 @@ export default function WhyUs() {
               className="h-12 w-auto rounded bg-white p-1"
             />
             <div>
-              <p className="font-heading text-2xl font-extrabold leading-none text-brand-orange">
+              <p className="font-heading text-2xl font-extrabold leading-none text-brand-blue">
                 {t.badge}
               </p>
               <p className="text-sm text-gray-300">{t.badgeSub}</p>
