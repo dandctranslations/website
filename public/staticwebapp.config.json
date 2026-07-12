@@ -1,4 +1,14 @@
 {
+  "routes": [
+    { "route": "/invoice/*", "allowedRoles": ["administrator"] },
+    { "route": "/api/send-invoice", "allowedRoles": ["administrator"] }
+  ],
+  "responseOverrides": {
+    "401": {
+      "redirect": "/.auth/login/github",
+      "statusCode": 302
+    }
+  },
   "navigationFallback": {
     "rewrite": "/index.html",
     "exclude": ["/static/*", "*.{css,js,ico,png,svg,json,txt,woff,woff2}"]

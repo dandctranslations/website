@@ -1,10 +1,15 @@
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import PhoneInput from 'react-phone-number-input';
+import 'react-phone-number-input/style.css';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import { BoltIcon, Field, inputClasses } from '../components/ui';
 import { useLang } from '../i18n';
 import { content } from '../content';
+
+// Keep total uploads under Gmail's 25MB receive limit (allowing for encoding).
+const MAX_TOTAL_BYTES = 20 * 1024 * 1024;
 
 function formatSize(bytes) {
   if (bytes < 1024) return `${bytes} B`;
@@ -18,7 +23,31 @@ export default function QuotePage() {
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [submitted, setSubmitted] = useState(false);
+  const [phone, setPhone] = useState('');
+  const [country, setCountry] = useState(lang === 'uz' ? 'UZ' : 'AU');
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState('');
   const inputRef = useRef(null);
+
+  const totalBytes = files.reduce((sum, f) => sum + f.size, 0);
+  const tooLarge = totalBytes > MAX_TOTAL_BYTES;
+
+  // Default the phone country code to where the visitor actually is (IP-based),
+  // falling back to the language-derived guess set above.
+  useEffect(() => {
+    let active = true;
+    fetch('https://ipwho.is/?fields=country_code')
+      .then((r) => r.json())
+      .then((d) => {
+        if (active && d && d.country_code) setCountry(d.country_code);
+      })
+      .catch(() => {
+        /* geolocation unavailable — keep the language-based default */
+      });
+    return () => {
+      active = false;
+    };
+  }, []);
 
   const addFiles = (fileList) => {
     const incoming = Array.from(fileList);
@@ -41,11 +70,29 @@ export default function QuotePage() {
     if (e.dataTransfer.files?.length) addFiles(e.dataTransfer.files);
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Interface only — no backend. Just show a confirmation.
-    setSubmitted(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    if (tooLarge || submitting) return;
+    setError('');
+    setSubmitting(true);
+    try {
+      const fd = new FormData(e.currentTarget);
+      fd.set('phone', phone || '');
+      fd.set('lang', lang);
+      files.forEach((f) => fd.append('files', f, f.name));
+
+      const res = await fetch('/api/submit-quote', { method: 'POST', body: fd });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data.error || t.submitError);
+      }
+      setSubmitted(true);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    } catch (err) {
+      setError(err.message || t.submitError);
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
@@ -95,6 +142,8 @@ export default function QuotePage() {
                   onClick={() => {
                     setSubmitted(false);
                     setFiles([]);
+                    setPhone('');
+                    setError('');
                   }}
                   className="inline-flex items-center rounded-sm border border-gray-300 px-7 py-3 font-heading text-sm font-bold uppercase tracking-wide text-brand-dark hover:bg-gray-50"
                 >
@@ -179,6 +228,12 @@ export default function QuotePage() {
                     ))}
                   </ul>
                 )}
+
+                {tooLarge && (
+                  <p className="mt-3 rounded-md bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
+                    {t.tooLarge} ({formatSize(totalBytes)})
+                  </p>
+                )}
               </div>
 
               {/* Details column */}
@@ -189,7 +244,21 @@ export default function QuotePage() {
                 <input id="email" name="email" type="email" required placeholder={t.emailPlaceholder} className={inputClasses} />
               </Field>
               <Field label={t.phone} htmlFor="phone">
-                <input id="phone" name="phone" type="tel" placeholder={t.phonePlaceholder} className={inputClasses} />
+                <div className="flex items-center rounded-md border border-gray-300 bg-white px-3 transition-colors focus-within:border-brand-blue focus-within:ring-2 focus-within:ring-brand-blue/20">
+                  <PhoneInput
+                    id="phone"
+                    key={country}
+                    international
+                    countryCallingCodeEditable={false}
+                    defaultCountry={country}
+                    value={phone}
+                    onChange={(v) => setPhone(v || '')}
+                    placeholder={t.phonePlaceholder}
+                    numberInputProps={{
+                      className: 'w-full bg-transparent px-1 py-2.5 text-gray-900 outline-none',
+                    }}
+                  />
+                </div>
               </Field>
               <Field label={t.serviceType} htmlFor="service">
                 <select id="service" name="service" className={inputClasses} defaultValue="">
@@ -239,19 +308,27 @@ export default function QuotePage() {
                 </Field>
               </div>
 
-              <div className="flex flex-wrap items-center gap-4 lg:col-span-2">
-                <button
-                  type="submit"
-                  className="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-blue px-9 py-4 font-heading text-base font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand-blueDark"
-                >
-                  <BoltIcon className="h-5 w-5" /> {t.submit}
-                </button>
-                <Link
-                  to="/"
-                  className="font-heading text-sm font-bold uppercase tracking-wide text-gray-500 hover:text-brand-blue"
-                >
-                  {t.backHome}
-                </Link>
+              <div className="lg:col-span-2">
+                {error && (
+                  <p className="mb-4 rounded-md bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
+                    {error}
+                  </p>
+                )}
+                <div className="flex flex-wrap items-center gap-4">
+                  <button
+                    type="submit"
+                    disabled={tooLarge || submitting}
+                    className="inline-flex items-center justify-center gap-2 rounded-sm bg-brand-blue px-9 py-4 font-heading text-base font-bold uppercase tracking-wide text-white transition-colors hover:bg-brand-blueDark disabled:cursor-not-allowed disabled:opacity-60"
+                  >
+                    <BoltIcon className="h-5 w-5" /> {submitting ? t.submitting : t.submit}
+                  </button>
+                  <Link
+                    to="/"
+                    className="font-heading text-sm font-bold uppercase tracking-wide text-gray-500 hover:text-brand-blue"
+                  >
+                    {t.backHome}
+                  </Link>
+                </div>
               </div>
             </form>
           )}
