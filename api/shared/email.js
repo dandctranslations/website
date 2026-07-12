@@ -115,19 +115,14 @@ function detailRows(pairs) {
   </table>`;
 }
 
-// Localized delivery note. Interpreting jobs don't produce a document, so they
-// get their own wording. "straight" removed and the payment-reference sentence
-// dropped, per the copy fixes.
+// Default delivery note (fallback when the invoice tool doesn't supply its own).
+// Interpreting jobs don't produce a document, so they get a blank note.
 function deliveryNote(lang, serviceType) {
   const isInterpreting = /interpret|og.?zaki/i.test(serviceType || '');
-  if (lang === 'uz') {
-    return isInterpreting
-      ? 'To‘lovingiz qabul qilingach, og‘zaki tarjima buyurtmangiz elektron pochta orqali tasdiqlanadi.'
-      : 'To‘lovingiz qabul qilingach, tayyor hujjatingiz elektron pochtangizga yuboriladi.';
-  }
-  return isInterpreting
-    ? 'Once your payment has been received, your interpreting booking will be confirmed by email.'
-    : 'Once your payment has been received, your completed document will be delivered to your email.';
+  if (isInterpreting) return '';
+  return lang === 'uz'
+    ? 'To‘lovingiz qabul qilingach, tarjima qilingan hujjat(lar)ingiz tez orada elektron pochtangizga yuboriladi.'
+    : 'Once your payment has been received, your translated document/s will be delivered to your email shortly.';
 }
 
 module.exports = { sendMail, gmailUser, escapeHtml, formatAmount, shell, button, detailRows, deliveryNote, BRAND, SITE_URL };

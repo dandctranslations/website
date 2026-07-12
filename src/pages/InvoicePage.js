@@ -12,6 +12,16 @@ const SERVICE_TYPES = [
   'Editing & proofreading',
 ];
 
+// Default text for the tinted delivery-note box at the bottom of the invoice
+// email. Prefilled for translation work; blank for interpreting (no document is
+// produced), so the owner can type their own note or leave it out.
+function defaultDeliveryNote(lang, service) {
+  if (/interpret/i.test(service || '')) return '';
+  return lang === 'uz'
+    ? 'To‘lovingiz qabul qilingach, tarjima qilingan hujjat(lar)ingiz tez orada elektron pochtangizga yuboriladi.'
+    : 'Once your payment has been received, your translated document/s will be delivered to your email shortly.';
+}
+
 // Build a reference like DC-20260710-JD from today's date + the client's initials.
 function suggestRef(client) {
   const date = new Date().toISOString().slice(0, 10).replace(/-/g, '');
@@ -38,6 +48,9 @@ export default function InvoicePage() {
   const [ref, setRef] = useState('');
   const [message, setMessage] = useState('');
   const [lang, setLang] = useState(params.get('lang') === 'uz' ? 'uz' : 'en');
+  const [deliveryNote, setDeliveryNote] = useState(() =>
+    defaultDeliveryNote(params.get('lang') === 'uz' ? 'uz' : 'en', params.get('service') || ''),
+  );
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [error, setError] = useState('');
   const [access, setAccess] = useState('checking'); // checking | ok
@@ -76,6 +89,13 @@ export default function InvoicePage() {
     };
   }, []);
 
+  // Re-apply the default delivery note whenever the service or language changes
+  // (e.g. switching to interpreting clears it). Manual edits survive changes to
+  // the other fields — only these two inputs drive the default.
+  useEffect(() => {
+    setDeliveryNote(defaultDeliveryNote(lang, service));
+  }, [lang, service]);
+
   const effectiveRef = ref.trim() || suggestRef(client);
   const canSend = email.trim() && region && amount !== '';
   const subject =
@@ -106,6 +126,7 @@ export default function InvoicePage() {
             serviceType: service,
             lang,
             message,
+            deliveryNote,
           }),
         });
         const data = await res.json().catch(() => ({}));
@@ -118,7 +139,7 @@ export default function InvoicePage() {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [access, status, client, email, region, amount, effectiveRef, service, lang, message]);
+  }, [access, status, client, email, region, amount, effectiveRef, service, lang, message, deliveryNote]);
 
   const send = async () => {
     if (!canSend || status === 'sending') return;
@@ -137,6 +158,7 @@ export default function InvoicePage() {
           serviceType: service,
           lang,
           message,
+          deliveryNote,
         }),
       });
       if (!res.ok) {
@@ -309,6 +331,20 @@ export default function InvoicePage() {
                   placeholder="Optional — add a personal note. It appears above the bank details."
                   className={inputClasses}
                 />
+              </Field>
+
+              <Field label="Delivery note" htmlFor="deliveryNote">
+                <textarea
+                  id="deliveryNote"
+                  rows={3}
+                  value={deliveryNote}
+                  onChange={(e) => setDeliveryNote(e.target.value)}
+                  placeholder="Shown in the highlighted box below the bank details. Leave blank to omit."
+                  className={inputClasses}
+                />
+                <span className="mt-1 block text-xs text-gray-500">
+                  Prefilled by default; cleared automatically for interpreting. Editing resets if you change the service or language.
+                </span>
               </Field>
 
               <div className="border-t border-gray-100 pt-6">

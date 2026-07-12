@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 const { ACCOUNTS } = require('../../accounts');
-const { sendMail, gmailUser, escapeHtml, formatAmount, shell, detailRows, deliveryNote } = require('../../shared/email');
+const { sendMail, gmailUser, escapeHtml, formatAmount, shell, detailRows, deliveryNote: computeDeliveryNote } = require('../../shared/email');
 
 // Confirm the caller holds the SWA "admin" role. Static Web Apps injects the
 // authenticated principal as a base64 JSON header; unauthenticated requests are
@@ -33,6 +33,11 @@ app.http('send-invoice', {
 
     const { client = '', email = '', region = '', amount = '', reference = '', serviceType = '', lang = 'en', message = '', preview = false } = body;
     const account = ACCOUNTS[region];
+
+    // Delivery note: use exactly what the tool sends (may be blank to omit it).
+    // Only fall back to the computed default when the field is absent entirely,
+    // so non-tool callers still get sensible copy.
+    const noteText = body.deliveryNote === undefined ? computeDeliveryNote(lang, serviceType) : body.deliveryNote;
 
     // The live preview renders with whatever's filled in so far, so it only needs
     // a valid region. A real send still requires the customer email and amount.
@@ -72,9 +77,11 @@ app.http('send-invoice', {
       ${messageHtml}
       <p style="margin:0 0 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:0.5px;color:#3B5CE6;">${escapeHtml(bankHeading)} — ${escapeHtml(account.label)}</p>
       ${rows}
-      <div style="margin-top:24px;padding:16px;background:#EEF2FE;border-radius:8px;font-size:14px;line-height:1.6;">
-        ${escapeHtml(deliveryNote(lang, serviceType))}
-      </div>
+      ${
+        noteText && noteText.trim()
+          ? `<div style="margin-top:24px;padding:16px;background:#EEF2FE;border-radius:8px;font-size:14px;line-height:1.6;white-space:pre-wrap;">${escapeHtml(noteText.trim())}</div>`
+          : ''
+      }
     `;
 
     const html = shell(heading, emailBody);
