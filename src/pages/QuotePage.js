@@ -1,5 +1,5 @@
 import { useRef, useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useSearchParams } from 'react-router-dom';
 import PhoneInput from 'react-phone-number-input';
 import 'react-phone-number-input/style.css';
 import Navbar from '../components/Navbar';
@@ -20,6 +20,17 @@ function formatSize(bytes) {
 export default function QuotePage() {
   const { lang } = useLang();
   const t = content[lang].quote;
+  const [params] = useSearchParams();
+  // Pre-select the service the visitor clicked "Request a Quote" from. Service
+  // cards pass an index (?service=N) that lines up with serviceTypes in both
+  // languages, so we track the index and resolve the label at submit time —
+  // that way it stays correct even if the visitor switches language.
+  const serviceParam = parseInt(params.get('service') ?? '', 10);
+  const [serviceIdx, setServiceIdx] = useState(
+    Number.isInteger(serviceParam) && serviceParam >= 0 && serviceParam < t.serviceTypes.length
+      ? serviceParam
+      : -1,
+  );
   const [files, setFiles] = useState([]);
   const [dragging, setDragging] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -79,6 +90,7 @@ export default function QuotePage() {
       const fd = new FormData(e.currentTarget);
       fd.set('phone', phone || '');
       fd.set('lang', lang);
+      fd.set('service', serviceIdx >= 0 ? t.serviceTypes[serviceIdx] : '');
       files.forEach((f) => fd.append('files', f, f.name));
 
       const res = await fetch('/api/submit-quote', { method: 'POST', body: fd });
@@ -261,12 +273,17 @@ export default function QuotePage() {
                 </div>
               </Field>
               <Field label={t.serviceType} htmlFor="service">
-                <select id="service" name="service" className={inputClasses} defaultValue="">
+                <select
+                  id="service"
+                  className={inputClasses}
+                  value={serviceIdx >= 0 ? String(serviceIdx) : ''}
+                  onChange={(e) => setServiceIdx(e.target.value === '' ? -1 : Number(e.target.value))}
+                >
                   <option value="" disabled>
                     {t.selectService}
                   </option>
-                  {t.serviceTypes.map((s) => (
-                    <option key={s} value={s}>
+                  {t.serviceTypes.map((s, i) => (
+                    <option key={s} value={i}>
                       {s}
                     </option>
                   ))}

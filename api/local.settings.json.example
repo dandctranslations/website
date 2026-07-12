@@ -4,9 +4,7 @@
     "FUNCTIONS_WORKER_RUNTIME": "node",
     "AzureWebJobsStorage": "",
     "NODE_ENV": "development",
-    "RESEND_API_KEY": "re_your_key_here",
-    "OWNER_EMAIL": "dandctranslations@gmail.com",
-    "FROM_NOREPLY": "D&C Translations <noreply@dandctranslations.com>",
-    "FROM_INVOICES": "D&C Translations <invoices@dandctranslations.com>"
+    "GMAIL_USER": "dandctranslations@gmail.com",
+    "GMAIL_APP_PASSWORD": "your16charapppassword"
   }
 }

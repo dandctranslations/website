@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 const Busboy = require('busboy');
-const { resendClient, escapeHtml, shell, button, detailRows, SITE_URL } = require('../../shared/email');
+const { sendMail, gmailUser, escapeHtml, shell, button, detailRows, SITE_URL } = require('../../shared/email');
 
 const MAX_TOTAL_BYTES = 20 * 1024 * 1024; // ~20MB, safely under Gmail's 25MB receive limit after encoding
 const ALLOWED_EXT = ['pdf', 'doc', 'docx', 'jpg', 'jpeg', 'png'];
@@ -115,18 +115,15 @@ app.http('submit-quote', {
     `;
 
     try {
-      const resend = resendClient();
-      const { error } = await resend.emails.send({
-        from: process.env.FROM_NOREPLY || 'D&C Translations <noreply@dandctranslations.com>',
-        to: process.env.OWNER_EMAIL || 'dandctranslations@gmail.com',
+      await sendMail({
+        to: gmailUser(),
         replyTo: email,
         subject: `New quote request — ${name}${service ? ` (${service})` : ''}`,
         html: shell('New quote request', body),
         attachments: files.map((f) => ({ filename: f.filename, content: f.content })),
       });
-      if (error) throw error;
     } catch (err) {
-      context.error('Resend send failed', err);
+      context.error('Gmail send failed', err);
       return { status: 502, jsonBody: { ok: false, error: 'Could not send the request. Please try again or email us directly.' } };
     }
 

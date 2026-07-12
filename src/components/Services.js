@@ -3,7 +3,7 @@ import { Eyebrow, BoltIcon } from './ui';
 import { useLang } from '../i18n';
 import { content } from '../content';
 
-function ServiceCard({ service, cta }) {
+function ServiceCard({ service, cta, index }) {
   return (
     <div className="group flex flex-col overflow-hidden rounded-lg bg-white shadow-md ring-1 ring-gray-100 transition-shadow hover:shadow-xl">
       <div className="relative h-44 overflow-hidden">
@@ -30,7 +30,7 @@ function ServiceCard({ service, cta }) {
           ))}
         </ul>
         <Link
-          to="/quote"
+          to={`/quote?service=${index}`}
           className="mt-6 inline-flex items-center gap-1 font-heading text-sm font-bold uppercase tracking-wide text-brand-blue transition-colors hover:text-brand-blueDark"
         >
           {cta} &rarr;
@@ -55,8 +55,8 @@ export default function Services() {
           <p className="mt-5 text-lg leading-relaxed text-gray-600">{t.body}</p>
         </div>
         <div className="mt-14 grid grid-cols-1 gap-7 sm:grid-cols-2 lg:grid-cols-4">
-          {t.items.map((s) => (
-            <ServiceCard key={s.title} service={s} cta={t.cta} />
+          {t.items.map((s, i) => (
+            <ServiceCard key={s.title} service={s} cta={t.cta} index={i} />
           ))}
         </div>
       </div>

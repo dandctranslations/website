@@ -25,8 +25,9 @@ function suggestRef(client) {
 }
 
 // Internal, auth-protected tool: the owner opens this (pre-filled from the quote
-// notification email), sets an amount, and sends the customer a branded invoice
-// email with the bank details. No public payment link is generated.
+// notification email), sets an amount, writes an optional message, and sends the
+// customer a branded invoice email with the bank details. The right-hand pane
+// shows a live preview of exactly what will land in the client's inbox.
 export default function InvoicePage() {
   const [params] = useSearchParams();
   const [client, setClient] = useState(params.get('client') || '');
@@ -35,10 +36,12 @@ export default function InvoicePage() {
   const [amount, setAmount] = useState('');
   const [service, setService] = useState(params.get('service') || '');
   const [ref, setRef] = useState('');
+  const [message, setMessage] = useState('');
   const [lang, setLang] = useState(params.get('lang') === 'uz' ? 'uz' : 'en');
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [error, setError] = useState('');
   const [access, setAccess] = useState('checking'); // checking | ok
+  const [previewHtml, setPreviewHtml] = useState('');
 
   // Gate the tool to the SWA "administrator" role. The page itself is publicly
   // routable (it holds no secrets — bank details live server-side), so we check
@@ -75,6 +78,47 @@ export default function InvoicePage() {
 
   const effectiveRef = ref.trim() || suggestRef(client);
   const canSend = email.trim() && region && amount !== '';
+  const subject =
+    lang === 'uz'
+      ? 'D&C Translations — to‘lov ma’lumotlari'
+      : 'D&C Translations — your payment details';
+
+  // Live inbox preview: ask the server to render the email HTML (the same code
+  // path the real send uses, so the bank details match) whenever the inputs
+  // change. Debounced so we don't hammer the endpoint on every keystroke, and
+  // skipped once the email has actually been sent.
+  useEffect(() => {
+    if (access !== 'ok' || status === 'sent' || !region) return undefined;
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
+      try {
+        const res = await fetch('/api/send-invoice', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          signal: controller.signal,
+          body: JSON.stringify({
+            preview: true,
+            client: client.trim(),
+            email: email.trim(),
+            region,
+            amount: amount === '' ? 0 : amount,
+            reference: effectiveRef,
+            serviceType: service,
+            lang,
+            message,
+          }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (data.ok && data.html) setPreviewHtml(data.html);
+      } catch {
+        /* preview is best-effort; ignore aborts and transient failures */
+      }
+    }, 350);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
+    };
+  }, [access, status, client, email, region, amount, effectiveRef, service, lang, message]);
 
   const send = async () => {
     if (!canSend || status === 'sending') return;
@@ -92,6 +136,7 @@ export default function InvoicePage() {
           reference: effectiveRef,
           serviceType: service,
           lang,
+          message,
         }),
       });
       if (!res.ok) {
@@ -136,8 +181,8 @@ export default function InvoicePage() {
       </section>
 
       <main className="flex-1 bg-brand-tint py-14">
-        <div className="mx-auto max-w-2xl px-5 sm:px-8">
-          {status === 'sent' ? (
+        {status === 'sent' ? (
+          <div className="mx-auto max-w-2xl px-5 sm:px-8">
             <div className="rounded-xl bg-white p-10 text-center shadow-lg">
               <span className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-brand-blue/10 text-brand-blue">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" className="h-8 w-8">
@@ -158,7 +203,10 @@ export default function InvoicePage() {
                 Send another
               </button>
             </div>
-          ) : (
+          </div>
+        ) : (
+          <div className="mx-auto grid max-w-6xl gap-8 px-5 sm:px-8 lg:grid-cols-2 lg:items-start">
+            {/* Left: inputs */}
             <div className="grid gap-6 rounded-xl bg-white p-6 shadow-lg sm:p-9">
               <Field label="Client name" htmlFor="client">
                 <input
@@ -252,6 +300,17 @@ export default function InvoicePage() {
                 </span>
               </Field>
 
+              <Field label="Message to client" htmlFor="message">
+                <textarea
+                  id="message"
+                  rows={4}
+                  value={message}
+                  onChange={(e) => setMessage(e.target.value)}
+                  placeholder="Optional — add a personal note. It appears above the bank details."
+                  className={inputClasses}
+                />
+              </Field>
+
               <div className="border-t border-gray-100 pt-6">
                 {status === 'error' && (
                   <p className="mb-4 rounded-md bg-red-50 px-4 py-2.5 text-sm font-medium text-red-700">
@@ -274,8 +333,37 @@ export default function InvoicePage() {
                 )}
               </div>
             </div>
-          )}
-        </div>
+
+            {/* Right: live inbox preview */}
+            <div className="lg:sticky lg:top-6">
+              <p className="mb-3 font-heading text-sm font-bold uppercase tracking-wide text-gray-500">
+                Inbox preview
+              </p>
+              <div className="overflow-hidden rounded-xl bg-white shadow-lg ring-1 ring-gray-100">
+                <div className="border-b border-gray-100 px-5 py-4">
+                  <p className="text-sm font-semibold text-brand-dark">{subject}</p>
+                  <p className="mt-1 text-xs text-gray-500">
+                    From: D&amp;C Translations &lt;dandctranslations@gmail.com&gt;
+                  </p>
+                  <p className="text-xs text-gray-500">
+                    To: {email.trim() || 'client@example.com'}
+                  </p>
+                </div>
+                {previewHtml ? (
+                  <iframe
+                    title="Invoice email preview"
+                    srcDoc={previewHtml}
+                    className="h-[620px] w-full border-0"
+                  />
+                ) : (
+                  <div className="flex h-[620px] items-center justify-center px-6 text-center text-sm text-gray-400">
+                    Fill in the details to preview the email.
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
       </main>
 
       <Footer />

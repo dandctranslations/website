@@ -1,8 +1,8 @@
-// Shared email helpers: Resend client, branded HTML shell, currency formatting,
-// and the localized invoice copy. Kept framework-free so it works inside any
-// Azure Function.
+// Shared email helpers: Gmail SMTP transport, branded HTML shell, currency
+// formatting, and the localized invoice copy. Kept framework-free so it works
+// inside any Azure Function.
 
-const { Resend } = require('resend');
+const nodemailer = require('nodemailer');
 
 const BRAND = {
   blue: '#3B5CE6',
@@ -13,12 +13,43 @@ const BRAND = {
 
 const SITE_URL = 'https://dandctranslations.com';
 
-// Lazily construct the Resend client so a missing key surfaces at send time
-// (not at module load) with a clear message.
-function resendClient() {
-  const key = process.env.RESEND_API_KEY;
-  if (!key) throw new Error('RESEND_API_KEY is not configured');
-  return new Resend(key);
+// The Gmail account we authenticate and send as. Emails go out FROM this
+// address (it shows in the account's "Sent" folder and replies come back here).
+function gmailUser() {
+  return process.env.GMAIL_USER || 'dandctranslations@gmail.com';
+}
+
+// Reusable Gmail SMTP transport, built lazily so a missing App Password surfaces
+// at send time with a clear message. Authenticates with a Google "App Password"
+// (requires 2-Step Verification on the account) — never the normal login password.
+let transporter;
+function gmailTransport() {
+  const user = process.env.GMAIL_USER;
+  const pass = process.env.GMAIL_APP_PASSWORD;
+  if (!user || !pass) {
+    throw new Error('GMAIL_USER / GMAIL_APP_PASSWORD are not configured');
+  }
+  if (!transporter) {
+    transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: { user, pass },
+    });
+  }
+  return transporter;
+}
+
+// Send an email from the Gmail account. `attachments` use nodemailer's shape:
+// { filename, content }. Resolves on success, throws on failure.
+async function sendMail({ to, replyTo, subject, html, attachments }) {
+  const transport = gmailTransport();
+  await transport.sendMail({
+    from: `D&C Translations <${gmailUser()}>`,
+    to,
+    replyTo: replyTo || gmailUser(),
+    subject,
+    html,
+    attachments,
+  });
 }
 
 function escapeHtml(str) {
@@ -99,4 +130,4 @@ function deliveryNote(lang, serviceType) {
     : 'Once your payment has been received, your completed document will be delivered to your email.';
 }
 
-module.exports = { resendClient, escapeHtml, formatAmount, shell, button, detailRows, deliveryNote, BRAND, SITE_URL };
+module.exports = { sendMail, gmailUser, escapeHtml, formatAmount, shell, button, detailRows, deliveryNote, BRAND, SITE_URL };
