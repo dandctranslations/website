@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
@@ -38,6 +38,40 @@ export default function InvoicePage() {
   const [lang, setLang] = useState(params.get('lang') === 'uz' ? 'uz' : 'en');
   const [status, setStatus] = useState('idle'); // idle | sending | sent | error
   const [error, setError] = useState('');
+  const [access, setAccess] = useState('checking'); // checking | ok
+
+  // Gate the tool to the SWA "administrator" role. The page itself is publicly
+  // routable (it holds no secrets — bank details live server-side), so we check
+  // the role client-side and bounce non-admins to login, preserving this exact
+  // prefilled URL as the post-login destination. That's what makes the emailed
+  // "Create invoice" deep link survive the auth round-trip.
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      let data;
+      try {
+        const res = await fetch('/.auth/me');
+        data = await res.json();
+      } catch {
+        // /.auth/me isn't served outside Static Web Apps (e.g. plain `npm start`):
+        // don't gate during local development.
+        if (!cancelled) setAccess('ok');
+        return;
+      }
+      const roles = data?.clientPrincipal?.userRoles || [];
+      if (roles.includes('administrator')) {
+        if (!cancelled) setAccess('ok');
+      } else {
+        const returnTo = window.location.pathname + window.location.search;
+        window.location.replace(
+          `/.auth/login/github?post_login_redirect_uri=${encodeURIComponent(returnTo)}`,
+        );
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const effectiveRef = ref.trim() || suggestRef(client);
   const canSend = email.trim() && region && amount !== '';
@@ -70,6 +104,18 @@ export default function InvoicePage() {
       setStatus('error');
     }
   };
+
+  if (access === 'checking') {
+    return (
+      <div className="flex min-h-screen flex-col font-sans">
+        <Navbar variant="quote" />
+        <main className="flex flex-1 items-center justify-center bg-brand-tint py-14">
+          <p className="text-sm font-medium text-gray-500">Checking access…</p>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col font-sans">
